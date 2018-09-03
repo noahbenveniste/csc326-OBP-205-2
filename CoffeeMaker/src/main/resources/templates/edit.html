@@ -55,11 +55,6 @@
 					$scope.selectedRecipe = clone($scope.recipes.find(e => e.id.toString() === $scope.id));
 				}
 			}
-
-			$scope.list = function() {
-				console.log( $scope )
-			}
-
         // Load the recipes on page load
 				updateRecipes();
 		});
@@ -68,16 +63,14 @@
 
 		<div ng-app="myApp" ng-controller="recipesCtrl">
 
-			<input type="submit" value="Test" ng-click="list()"/>
-
 			<ul>
 				<li ng-repeat="recipe in recipes"><label>{{recipe.name}}
 							<input type="radio" ng-model="$parent.id" name="name"
 						value="{{recipe.id}}" required="true" ng-click="updatePlaceholders()"/>
 				</label></li>
 			</ul>
-			<div ng-if="0 >= recipes.length">There are no recipes in the
-				Coffee Maker.
+			<div ng-if="0 >= recipes.length">
+				There are no recipes in the Coffee Maker.
       </div>
 
       <div class="panel-heading">
@@ -92,7 +85,7 @@
 							<label class="col-md-2 control-lable" for="file">Price</label>
 							<div class="col-md-7">
 								<input type="text" ng-model="selectedRecipe.price"
-									name="coffee" class="coffee form-control input-sm"
+									name="price" class="price form-control input-sm"
 									placeholder="{{selectedRecipe ? 'Enter price' : defaultHolder}}"
 									required="0"
 									ng-readonly="!selectedRecipe"
