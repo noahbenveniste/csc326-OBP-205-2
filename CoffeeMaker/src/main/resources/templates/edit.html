@@ -49,7 +49,10 @@
 
 			$scope.updatePlaceholders = function() {
 				if($scope.id){
-					$scope.selectedRecipe = $scope.recipes.find(e => e.id.toString() === $scope.id);
+					//Function will perform shallow clone
+					clone = obj => Object.assign({}, obj);
+
+					$scope.selectedRecipe = clone($scope.recipes.find(e => e.id.toString() === $scope.id));
 				}
 			}
 
