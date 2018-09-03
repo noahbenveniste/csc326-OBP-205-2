@@ -83,13 +83,36 @@
 			<div class="formcontainer">
 				<form ng-submit="ctrl.submit()" name="addInventoryForm"
 					class="form-horizontal">
+
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label class="col-md-2 control-lable" for="file">Price</label>
+							<div class="col-md-7">
+								<input type="text" ng-model="selectedRecipe.price"
+									name="coffee" class="coffee form-control input-sm"
+									placeholder="{{selectedRecipe ? 'Enter price' : defaultHolder}}"
+									required="0"
+									ng-readonly="!selectedRecipe"
+								/>
+								<div class="has-error" ng-show="addInventoryForm.$dirty">
+									<span ng-show="addInventoryForm.price.$error.required">This
+										is a required field</span> <span
+										ng-show="addInventoryForm.price.$error.min">Minimum
+										amount is 0</span> <span ng-show="addInventoryForm.price.$invalid">This
+										field is invalid </span>
+								</div>
+							</div>
+						</div>
+					</div>
+
 					<div class="row">
 						<div class="form-group col-md-12">
 							<label class="col-md-2 control-lable" for="file">Coffee</label>
 							<div class="col-md-7">
-								<input type="text" ng-model="ctrl.inventory.coffee"
+								<input type="text" ng-model="selectedRecipe.coffee"
 									name="coffee" class="coffee form-control input-sm"
-									placeholder="{{selectedRecipe.coffee.toString() || defaultHolder}}" required="0"
+									placeholder="{{selectedRecipe ? 'Enter amount of coffee' : defaultHolder}}"
+									required="0"
 									ng-readonly="!selectedRecipe"
 								/>
 								<div class="has-error" ng-show="addInventoryForm.$dirty">
@@ -108,9 +131,9 @@
 						<div class="form-group col-md-12">
 							<label class="col-md-2 control-lable" for="file">Milk</label>
 							<div class="col-md-7">
-								<input type="text" ng-model="ctrl.inventory.milk" name="milk"
+								<input type="text" ng-model="selectedRecipe.milk" name="milk"
 									class="milk form-control input-sm"
-									placeholder="{{selectedRecipe.milk.toString() || defaultHolder}}" required="0"
+									placeholder="{{selectedRecipe ? 'Enter amount of milk' : defaultHolder}}" required="0"
 									ng-readonly="!selectedRecipe"/>
 								<div class="has-error" ng-show="addInventoryForm.$dirty">
 									<span ng-show="addInventoryForm.milk.$error.required">This
@@ -127,9 +150,9 @@
 						<div class="form-group col-md-12">
 							<label class="col-md-2 control-lable" for="file">Sugar</label>
 							<div class="col-md-7">
-								<input type="text" ng-model="ctrl.inventory.sugar" name="sugar"
+								<input type="text" ng-model="selectedRecipe.sugar" name="sugar"
 									class="sugar form-control input-sm"
-									placeholder="{{selectedRecipe.sugar.toString() || defaultHolder}}" required="0"
+									placeholder="{{selectedRecipe ? 'Enter amount of sugar' : defaultHolder}}" required="0"
 									ng-readonly="!selectedRecipe"/>
 								<div class="has-error" ng-show="addInventoryForm.$dirty">
 									<span ng-show="addInventoryForm.sugar.$error.required">This
@@ -147,9 +170,9 @@
 						<div class="form-group col-md-12">
 							<label class="col-md-2 control-lable" for="file">Chocolate</label>
 							<div class="col-md-7">
-								<input type="text" ng-model="ctrl.inventory.chocolate"
+								<input type="text" ng-model="selectedRecipe.chocolate"
 									name="chocolate" class="chocolate form-control input-sm"
-									placeholder="{{selectedRecipe.chocolate.toString() || defaultHolder}}" required="0"
+									placeholder="{{selectedRecipe ? 'Enter amount of chocolate' : defaultHolder}}" required="0"
 									ng-readonly="!selectedRecipe"/>
 								<div class="has-error" ng-show="addInventoryForm.$dirty">
 									<span ng-show="addInventoryForm.chocolate.$error.required">This
