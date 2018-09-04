@@ -144,13 +144,6 @@ public class EditRecipeTest extends SeleniumTest {
         }
     }
 
-    //
-    // @Test
-    // public void test02InputBoxesReadonly () throws Exception {
-    // driver.get( baseUrl );
-    // driver.findElement( By.linkText( "Edit a Recipe" ) ).click();
-    // }
-
     @Override
     @After
     public void tearDown () {
