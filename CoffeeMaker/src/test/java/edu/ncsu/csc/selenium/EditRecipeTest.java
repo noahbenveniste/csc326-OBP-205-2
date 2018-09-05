@@ -112,6 +112,7 @@ public class EditRecipeTest extends SeleniumTest {
      */
     @Test
     public void testRecipesDisplayedInEditMenu () throws Exception {
+        this.deleteAll();
         addRecipe( "Coffee", "1" );
         addRecipe( "Ripoff", "2" );
 
@@ -120,6 +121,12 @@ public class EditRecipeTest extends SeleniumTest {
         assertTextPresent( "Ripoff", driver );
     }
 
+    /**
+     * Tests that when two recipes are added, their values are prefilled in the
+     * edit form.
+     *
+     * @throws Exception
+     */
     @Test
     public void testRecipeValuesPrefilledInEditMenu () throws Exception {
         this.deleteAll();
@@ -142,6 +149,33 @@ public class EditRecipeTest extends SeleniumTest {
         for ( int i = 1; i < 5; i++ ) {
             assertEquals( Integer.toString( i ), fields.get( i ).getAttribute( "value" ) );
         }
+    }
+
+    /**
+     * Tests that recipes actually update after submitting the form.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testRecipeChangeOnSubmitButton () throws Exception {
+        this.deleteAll();
+        addRecipe( "Coffee", "0" );
+        navigateToEdit();
+        final List<WebElement> options = driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) );
+        options.get( 0 ).click();
+
+        final List<WebElement> fields = driver.findElements( By.className( "input-sm" ) );
+
+        fields.get( 0 ).sendKeys( "1" );
+
+        driver.findElement( By.className( "btn-primary" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "1", driver.findElements( By.className( "input-sm" ) ).get( 0 ).getAttribute( "value" ) );
+
     }
 
     @Override
