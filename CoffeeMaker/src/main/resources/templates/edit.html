@@ -3,7 +3,7 @@
 <head>
 <title>View Recipes</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<!-- THROWAWAY COMMENT -->
+
 <style>
 .username.ng-valid {
 	background-color: lightgreen;
@@ -48,11 +48,14 @@
     	}
 
 			function updateRecipe(recipe) {
+				$scope.success = false;
+	    		$scope.failure = false;
 				var deferred = $q.defer();
 		        $http.put("/api/v1/recipes/" + recipe.name, recipe)
 		            .then(
 		            function (response) {
 		            		console.log(response);
+		            		$scope.success = true;
 		    				$scope.submissionSuccess=true;
 
 		                deferred.resolve(response.data);
@@ -60,6 +63,8 @@
 		             	updateRecipes();
 		            },
 		            function(rejection){
+		            	$scope.failure = true;
+	            		$scope.success = false;
 		                console.error('Error while updating recipe');
 		                console.log(rejection);
 
@@ -118,17 +123,16 @@
 								<input type="text" ng-model="selectedRecipe.price"
 									name="price" class="price form-control input-sm"
 									placeholder="{{selectedRecipe ? 'Enter price' : defaultHolder}}"
-									required="0"
 									ng-readonly="!selectedRecipe"
 									ng-min="0"
 									ng-pattern="/^\d+$/"
+									required="0"
 								/>
 								<div class="has-error" ng-show="addInventoryForm.$dirty">
 									<span ng-show="addInventoryForm.price.$error.required">This
-										is a required field</span> <span
-										ng-show="addInventoryForm.price.$error.min">Minimum
-										amount is 0</span> <span ng-show="addInventoryForm.price.$invalid">This
-										field is invalid </span>
+										is a required field.</span> <span
+										ng-show="addInventoryForm.price.$error.pattern">Value must be a 
+										positive integer.</span>
 								</div>
 							</div>
 						</div>
@@ -147,11 +151,17 @@
 									ng-pattern="/^\d+$/"
 								/>
 								<div class="has-error" ng-show="addInventoryForm.$dirty">
+									<!--
 									<span ng-show="addInventoryForm.coffee.$error.required">This
 										is a required field</span> <span
 										ng-show="addInventoryForm.coffee.$error.min">Minimum
 										amount is 0</span> <span ng-show="addInventoryForm.coffee.$invalid">This
 										field is invalid </span>
+									-->
+									<span ng-show="addInventoryForm.coffee.$error.required">This
+										is a required field.</span> <span
+										ng-show="addInventoryForm.coffee.$error.pattern">Value must be a 
+										positive integer.</span>
 								</div>
 							</div>
 						</div>
@@ -170,11 +180,17 @@
 									ng-pattern="/^\d+$/"
 								/>
 								<div class="has-error" ng-show="addInventoryForm.$dirty">
+									<!--
 									<span ng-show="addInventoryForm.milk.$error.required">This
 										is a required field</span> <span
 										ng-show="addInventoryForm.milk.$error.min">Minimum
 										amount is 0</span> <span ng-show="addInventoryForm.milk.$invalid">This
 										field is invalid </span>
+									-->
+									<span ng-show="addInventoryForm.milk.$error.required">This
+										is a required field.</span> <span
+										ng-show="addInventoryForm.milk.$error.pattern">Value must be a 
+										positive integer.</span>
 								</div>
 							</div>
 						</div>
@@ -192,11 +208,17 @@
 									ng-pattern="/^\d+$/"
 								/>
 								<div class="has-error" ng-show="addInventoryForm.$dirty">
+									<!--
 									<span ng-show="addInventoryForm.sugar.$error.required">This
 										is a required field</span> <span
 										ng-show="addInventoryForm.sugar.$error.min">Minimum
 										amount is 0</span> <span ng-show="addInventoryForm.sugar.$invalid">This
 										field is invalid </span>
+									-->
+									<span ng-show="addInventoryForm.sugar.$error.required">This
+										is a required field.</span> <span
+										ng-show="addInventoryForm.sugar.$error.pattern">Value must be a 
+										positive integer.</span>
 								</div>
 							</div>
 						</div>
@@ -215,12 +237,18 @@
 									ng-pattern="/^\d+$/"
 								/>
 								<div class="has-error" ng-show="addInventoryForm.$dirty">
+									<!--
 									<span ng-show="addInventoryForm.chocolate.$error.required">This
 										is a required field.</span> <span
 										ng-show="addInventoryForm.chocolate.$error.min">Minimum
 										amount is 0.</span> <span
 										ng-show="addInventoryForm.chocolate.$invalid">This
 										field is invalid. </span>
+									-->
+									<span ng-show="addInventoryForm.chocolate.$error.required">This
+										is a required field.</span> <span
+										ng-show="addInventoryForm.chocolate.$error.pattern">Value must be a 
+										positive integer.</span>
 								</div>
 							</div>
 						</div>
@@ -240,8 +268,8 @@
 					</div>
 				</form>
 			</div>
-			<div ng-show="success">Inventory Successfully Updated</div>
-			<div ng-show="failure">Error while updating inventory.</div>
+			<div ng-show="success">Recipe Successfully Updated</div>
+			<div ng-show="failure">Error while updating recipe.</div>
 
 		</div>
 		<a href="/index">Home</a>
