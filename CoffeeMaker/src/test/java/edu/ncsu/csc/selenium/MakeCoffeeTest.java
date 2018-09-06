@@ -193,8 +193,8 @@ public class MakeCoffeeTest extends SeleniumTest {
      */
     @Test
     public void testInvalidMakeCoffee () throws Exception {
-        makeCoffee( "Coffee", 60, 0, 3, 7, 2, 59, "Error while making recipe" );
-        makeCoffee( "Coffee", 60, 5, 0, 7, 2, -1, "Error while making recipe" );
+        makeCoffee( "Coffee", 60, 0, 3, 7, 2, 59, "Coffee cannot be made" );
+        makeCoffee( "Coffee", 60, 5, 0, 7, 2, -1, "Coffee cannot be made" );
     }
 
     @Override
