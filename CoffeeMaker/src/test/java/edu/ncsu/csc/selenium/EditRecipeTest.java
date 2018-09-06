@@ -117,8 +117,7 @@ public class EditRecipeTest extends SeleniumTest {
         addRecipe( "Ripoff", "2" );
 
         navigateToEdit();
-        assertTextPresent( "Coffee", driver );
-        assertTextPresent( "Ripoff", driver );
+        assertEquals( 2, driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).size() );
     }
 
     /**
@@ -153,7 +152,7 @@ public class EditRecipeTest extends SeleniumTest {
 
     /**
      * Tests that recipes actually update after submitting the form.
-     * 
+     *
      * @throws Exception
      */
     @Test
