@@ -24,7 +24,7 @@ import edu.ncsu.csc.coffee_maker.models.persistent.Inventory;
  */
 @SuppressWarnings ( { "unchecked", "rawtypes" } )
 @RestController
-public class APIInventoryController extends APIController{
+public class APIInventoryController extends APIController {
 
     /**
      * REST API endpoint to provide GET access to the CoffeeMaker's singleton
