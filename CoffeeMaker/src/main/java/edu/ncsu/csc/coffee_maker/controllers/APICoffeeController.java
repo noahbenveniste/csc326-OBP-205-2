@@ -38,14 +38,15 @@ public class APICoffeeController extends APIController {
      */
     @PostMapping ( BASE_PATH + "/makecoffee/{name}" )
     public ResponseEntity makeCoffee ( @PathVariable ( "name" ) final String name, @RequestBody final int amtPaid ) {
-        return getCoffeeResponse( name, amtPaid );
+        final Recipe recipe = Recipe.getByName( name );
+        return getCoffeeResponse( recipe, amtPaid );
     }
 
     /**
      * Yields the appropriate response entity when making coffee.
      *
      * Extracted for unit testing purposes
-     * 
+     *
      * @param name
      *            Recipe Name
      * @param amtPaid
@@ -53,8 +54,7 @@ public class APICoffeeController extends APIController {
      * @return The response entity with the change the customer is due, or the
      *         error message if unsuccessful
      */
-    ResponseEntity getCoffeeResponse ( final String name, final int amtPaid ) {
-        final Recipe recipe = Recipe.getByName( name );
+    ResponseEntity getCoffeeResponse ( final Recipe recipe, final int amtPaid ) {
         if ( recipe == null ) {
             System.out.println( "No recipe selected" );
             return new ResponseEntity( errorResponse( "No recipe selected" ), HttpStatus.NOT_FOUND );
