@@ -7,52 +7,54 @@ import io.github.bonigarcia.wdm.ChromeDriverManager;
 
 public class BrowserHandler {
 
-	static private boolean Mac() {
-		return OS.contains("Mac OS X");
-	}
+    static private boolean Mac () {
+        return OS.contains( "Mac OS X" );
+    }
 
-	static private boolean Linux() {
-		return OS.contains("Linux");
-	}
+    static private boolean Linux () {
+        return OS.contains( "Linux" );
+    }
 
-	static private boolean Windows() {
-		return OS.contains("Windows");
-	}
+    static private boolean Windows () {
+        return OS.contains( "Windows" );
+    }
 
-	private ChromeDriver driver;
-	
-	public ChromeDriver getDriver() {
-		return driver;
-	}
+    private final ChromeDriver driver;
 
-	static private BrowserHandler instance = new BrowserHandler();
+    public ChromeDriver getDriver () {
+        return driver;
+    }
 
-	static private String OS; 
+    static private BrowserHandler instance = new BrowserHandler();
 
-	private BrowserHandler() {
-		
-		OS = System.getProperty("os.name");
+    static private String         OS;
 
-		ChromeDriverManager.getInstance().setup();
-		final ChromeOptions options = new ChromeOptions();
-		options.addArguments("headless");
-		options.addArguments("window-size=1200x600");
-		options.addArguments("blink-settings=imagesEnabled=false");
+    private BrowserHandler () {
 
-		if (Linux()) {
-			options.setBinary("/usr/bin/google-chrome");
-		} else if (Windows()) {
-			options.setBinary("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe");
-		} else if (Mac()) {
-			options.setBinary("/Applications/Google Chrome/Contents/MacOS/Google Chrome");
-		}
+        OS = System.getProperty( "os.name" );
 
-		driver = new ChromeDriver(options);
+        ChromeDriverManager.getInstance().setup();
+        final ChromeOptions options = new ChromeOptions();
+        options.addArguments( "headless" );
+        options.addArguments( "window-size=1200x600" );
+        options.addArguments( "blink-settings=imagesEnabled=false" );
 
-	}
+        if ( Linux() ) {
+            options.setBinary( "/usr/bin/google-chrome" );
+        }
+        else if ( Windows() ) {
+            options.setBinary( "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe" );
+        }
+        else if ( Mac() ) {
+            options.setBinary( "/Applications/Google Chrome/Contents/MacOS/Google Chrome" );
+        }
 
-	static public BrowserHandler getInstance() {
-		return instance;
-	}
+        driver = new ChromeDriver( options );
+
+    }
+
+    static public BrowserHandler getInstance () {
+        return instance;
+    }
 
 }
