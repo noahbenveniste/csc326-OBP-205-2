@@ -32,12 +32,16 @@ public class APICoffeeController extends APIController {
      *
      * @param name
      *            recipe name
-     * @param amtPaid
+     * @param payment
      *            amount paid
      * @return The change the customer is due if successful
      */
     @PostMapping ( BASE_PATH + "/makecoffee/{name}" )
-    public ResponseEntity makeCoffee ( @PathVariable ( "name" ) final String name, @RequestBody final int amtPaid ) {
+    public ResponseEntity makeCoffee ( @PathVariable ( "name" ) final String name, @RequestBody final Number payment ) {
+        final int amtPaid = payment.intValue();
+        if ( !payment.equals( amtPaid ) ) {
+            return new ResponseEntity( errorResponse( "Noninteger amount of money" ), HttpStatus.CONFLICT );
+        }
         final Recipe recipe = Recipe.getByName( name );
         return getCoffeeResponse( recipe, amtPaid );
     }
