@@ -47,6 +47,33 @@
     			});
     	}
 
+			function updateRecipe(recipe) {
+				var deferred = $q.defer();
+		        $http.put("/api/v1/recipes/" + recipe.name, recipe)
+		            .then(
+		            function (response) {
+		            		console.log(response);
+		    				$scope.submissionSuccess=true;
+
+		                deferred.resolve(response.data);
+
+		             	updateRecipes();
+		            },
+		            function(rejection){
+		                console.error('Error while updating recipe');
+		                console.log(rejection);
+
+						$scope.submissionSuccess=false;
+		                deferred.reject(rejection);
+
+		             	// Update recipe list
+				        $http.get("/api/v1/recipes").then(function (response) {
+			  				$scope.recipes = response.data;
+			  			});
+		            }
+		        );
+			}
+
 			$scope.updatePlaceholders = function() {
 				if($scope.id){
 					//Function will perform shallow clone
@@ -54,6 +81,10 @@
 
 					$scope.selectedRecipe = clone($scope.recipes.find(e => e.id.toString() === $scope.id));
 				}
+			}
+
+			$scope.update = function() {
+				updateRecipe($scope.selectedRecipe);
 			}
         // Load the recipes on page load
 				updateRecipes();
@@ -187,7 +218,8 @@
 						<div class="form-actions floatRight">
 							<input type="submit" value="Submit"
 								class="btn btn-primary btn-sm"
-								ng-disabled="addInventoryForm.$invalid" />
+								ng-disabled="addInventoryForm.$invalid"
+								ng-click="update()" />
 							<button type="button" ng-click="ctrl.reset()"
 								class="btn btn-warning btn-sm"
 								ng-disabled="addInventoryForm.$pristine">Reset Form</button>
