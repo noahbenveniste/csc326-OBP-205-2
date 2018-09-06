@@ -43,6 +43,22 @@ public class APICoffeeController extends APIController {
             return new ResponseEntity( errorResponse( "Noninteger amount of money" ), HttpStatus.CONFLICT );
         }
         final Recipe recipe = Recipe.getByName( name );
+        return getCoffeeResponse( recipe, amtPaid );
+    }
+
+    /**
+     * Yields the appropriate response entity when making coffee.
+     *
+     * Extracted for unit testing purposes
+     *
+     * @param recipe
+     *            Recipe Name
+     * @param amtPaid
+     *            Amount Paid
+     * @return The response entity with the change the customer is due, or the
+     *         error message if unsuccessful
+     */
+    ResponseEntity getCoffeeResponse ( final Recipe recipe, final int amtPaid ) {
         if ( recipe == null ) {
             System.out.println( "No recipe selected" );
             return new ResponseEntity( errorResponse( "No recipe selected" ), HttpStatus.NOT_FOUND );
