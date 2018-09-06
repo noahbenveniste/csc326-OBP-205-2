@@ -1,7 +1,6 @@
 package edu.ncsu.csc.coffee_maker.controllers;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,6 +69,18 @@ public class APICoffeeControllerTest {
         free.setName( "Coffee" );
         free.setPrice( 10 );
 
-        assertNotEquals( HttpStatus.OK, controller.getCoffeeResponse( free, 9 ).getStatusCode() );
+        assertEquals( HttpStatus.CONFLICT, controller.getCoffeeResponse( free, 9 ).getStatusCode() );
+    }
+
+    /**
+     * Tests that a beverage cannot be purchased with a noninteger payment
+     */
+    @Test
+    public void testBuyCoffeeWithoutNonintegerMoney () {
+        final Recipe free = new Recipe();
+        free.setName( "Coffee" );
+        free.setPrice( 10 );
+
+        assertEquals( HttpStatus.CONFLICT, controller.getCoffeeResponse( free, 19.5 ).getStatusCode() );
     }
 }

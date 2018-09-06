@@ -38,12 +38,8 @@ public class APICoffeeController extends APIController {
      */
     @PostMapping ( BASE_PATH + "/makecoffee/{name}" )
     public ResponseEntity makeCoffee ( @PathVariable ( "name" ) final String name, @RequestBody final Number payment ) {
-        final int amtPaid = payment.intValue();
-        if ( !payment.equals( amtPaid ) ) {
-            return new ResponseEntity( errorResponse( "Noninteger amount of money" ), HttpStatus.CONFLICT );
-        }
         final Recipe recipe = Recipe.getByName( name );
-        return getCoffeeResponse( recipe, amtPaid );
+        return getCoffeeResponse( recipe, payment );
     }
 
     /**
@@ -53,15 +49,20 @@ public class APICoffeeController extends APIController {
      *
      * @param recipe
      *            Recipe Name
-     * @param amtPaid
+     * @param payment
      *            Amount Paid
      * @return The response entity with the change the customer is due, or the
      *         error message if unsuccessful
      */
-    ResponseEntity getCoffeeResponse ( final Recipe recipe, final int amtPaid ) {
+    ResponseEntity getCoffeeResponse ( final Recipe recipe, final Number payment ) {
         if ( recipe == null ) {
             System.out.println( "No recipe selected" );
             return new ResponseEntity( errorResponse( "No recipe selected" ), HttpStatus.NOT_FOUND );
+        }
+
+        final int amtPaid = payment.intValue();
+        if ( !payment.equals( amtPaid ) ) {
+            return new ResponseEntity( errorResponse( "Noninteger amount of money" ), HttpStatus.CONFLICT );
         }
 
         System.out.println( "recipe: " + recipe.getName() + "    amt: " + amtPaid );
