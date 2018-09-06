@@ -20,6 +20,13 @@
 					$scope.recipes = response.data;
 				});
 
+
+				/* Function adapted from https://stackoverflow.com/a/26824304/10247651 */
+				function isNumeric(value) {
+					var er = /^-?[0-9.]+$/;
+    			return er.test(value);
+				}
+
 				/*Given a message of the form "Change: xxxx", returns the numeric part*/
 				function getChange(message) {
 					return message.substring(8);
@@ -32,6 +39,12 @@
 					$scope.submissionSuccess=false;
 
 					var deferred = $q.defer();
+
+					if(!isNumeric(amtPaid)) {
+						console.error('Error while making recipe');
+						$scope.submissionFailure=true;
+						$scope.error = "Error while making recipe";
+					}
 					$http.post("/api/v1/makecoffee/" + name, amtPaid)
 					.then(
 						function (response) {
@@ -39,12 +52,17 @@
 							$scope.change = getChange(response.data.message);
 							$scope.submissionSuccess=true;
 						},
-						function(errResponse){
+						function(errResponse) {
 							console.error('Error while making recipe');
 							deferred.reject(errResponse);
 							console.log(errResponse);
 							$scope.submissionFailure=true;
 							$scope.error = "Error while making recipe";
+							if(errResponse.data.message === "Not enough money paid"
+								|| errResponse.data.message === "Noninteger amount of money"
+								|| errResponse.data.message === "Not enough inventory"){
+								$scope.error = "Coffee cannot be made. Your change is " + amtPaid.toString() + ".";
+							}
 						}
 					);
 					return deferred.promise;
@@ -74,7 +92,7 @@
 			<br />
 
 			<div ng-show="submissionSuccess">Coffee was made. Your change is {{change}}.</div>
-			<div ng-show="submissionFailure">An error occurred: {{error}}</div>
+			<div ng-show="submissionFailure">{{error}}</div>
 
 			<br />
 
