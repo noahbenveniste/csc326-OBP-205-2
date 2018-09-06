@@ -50,6 +50,14 @@ public class APICoffeeController extends APIController {
 
         System.out.println( "recipe: " + recipe.getName() + "    amt: " + amtPaid );
         final int change = makeCoffee( recipe, amtPaid );
+
+        // Bug fix: Without this if statement, no free items can be bought
+        if ( recipe.getPrice() == 0 && amtPaid >= 0 ) {
+            System.out.println( "change: " + change );
+            return new ResponseEntity<String>( successResponse( "change: " + amtPaid ), HttpStatus.OK );
+        }
+
+        // Literally who made the decision that this was the best way to do it?
         if ( change == amtPaid ) {
             if ( amtPaid < recipe.getPrice() ) {
                 return new ResponseEntity( errorResponse( "Not enough money paid" ), HttpStatus.CONFLICT );
