@@ -73,13 +73,13 @@
 						value="{{recipe.name}}" required="true" />
 				</label></li>
 			</ul>
+			<div ng-if="0 >= recipes.length">There are no recipes in the
+				Coffee Maker.</div>
 			<br /> <input type="checkbox" name="all" class="checkbox"
 				ng-model="deleteAll">Delete all recipes?</input> <input
 				type="submit" value="Delete" ng-click="del()"
 				ng-if="recipes.length > 0" />
 
-			<div ng-if="0 >= recipes.length">There are no recipes in the
-				Coffee Maker.</div>
 			<div ng-if="submissionSuccess">Recipe deleted successfully</div>
 
 
