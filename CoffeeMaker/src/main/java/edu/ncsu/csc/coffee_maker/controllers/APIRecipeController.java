@@ -60,11 +60,15 @@ public class APIRecipeController extends APIController {
      * name of the recipe)
      *
      * @param name
-     *            recipe name
-     * @return response to the request
+     *            The name of the recipe to update
+     * @param recipe
+     *            The recipe to replace the one selected
+     *
+     * @return ResponseEntity indicating success or failure
      */
     @PutMapping ( BASE_PATH + "/recipes/{name}" )
-    public ResponseEntity putRecipe ( @PathVariable ( "name" ) final String name, @RequestBody final Recipe recipe ) {
+    public ResponseEntity updateRecipe ( @PathVariable ( "name" ) final String name,
+            @RequestBody final Recipe recipe ) {
         final Recipe oldRecipe = Recipe.getByName( name );
         if ( oldRecipe == null ) {
             return new ResponseEntity( errorResponse( "No recipe found for name " + name ), HttpStatus.NOT_FOUND );
