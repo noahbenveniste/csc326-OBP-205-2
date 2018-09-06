@@ -47,7 +47,7 @@ public class APICoffeeController extends APIController {
      *
      * Extracted for unit testing purposes
      *
-     * @param name
+     * @param recipe
      *            Recipe Name
      * @param amtPaid
      *            Amount Paid
