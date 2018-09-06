@@ -17,6 +17,7 @@ import com.paulhammant.ngwebdriver.NgWebDriver;
  * Tests the Edit Recipe functionality.
  *
  * @author Neil Dey (ndey3@ncsu.edu)
+ * @author Noah Benveniste (nnbenven@ncsu.edu)
  */
 
 public class EditRecipeTest extends SeleniumTest {
@@ -32,6 +33,10 @@ public class EditRecipeTest extends SeleniumTest {
 
         baseUrl = "http://localhost:8080";
         driver.manage().timeouts().implicitlyWait( 10, TimeUnit.SECONDS );
+    }
+
+    private static void WaitForAngularToLoad () {
+        new NgWebDriver( (ChromeDriver) driver ).waitForAngularRequestsToFinish();
     }
 
     /**
@@ -174,6 +179,365 @@ public class EditRecipeTest extends SeleniumTest {
         driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
 
         assertEquals( "1", driver.findElements( By.className( "input-sm" ) ).get( 0 ).getAttribute( "value" ) );
+
+    }
+
+    @Test
+    public void testFormValidation () throws Exception {
+        // Add a recipe
+        this.deleteAll();
+        addRecipe( "Coffee", "9001" );
+
+        // Give a chance for backend to process.
+        Thread.sleep( 1000 );
+
+        // Go to the edit page
+        navigateToEdit();
+        final List<WebElement> options = driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) );
+        options.get( 0 ).click();
+
+        /* Scenario #1a: Negative price */
+
+        // Get the input forms for each of the fields
+        WebElement priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        WebElement coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        WebElement milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        WebElement sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        WebElement chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        // Input values
+        priceInput.sendKeys( "-1" );
+        coffeeInput.sendKeys( "0" );
+        milkInput.sendKeys( "0" );
+        sugarInput.sendKeys( "0" );
+        chocolateInput.sendKeys( "0" );
+
+        // Attempt to submit
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        // Refresh page
+        navigateToEdit();
+
+        // Re-select the recipe
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        // Check that none of the values changed
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
+
+        /* Scenario #1b: Non-integer price */
+
+        priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        priceInput.sendKeys( "1.618" );
+        coffeeInput.sendKeys( "0" );
+        milkInput.sendKeys( "0" );
+        sugarInput.sendKeys( "0" );
+        chocolateInput.sendKeys( "0" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
+
+        /* Scenario #2a: Negative coffee */
+
+        priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        priceInput.sendKeys( "0" );
+        coffeeInput.sendKeys( "-1" );
+        milkInput.sendKeys( "0" );
+        sugarInput.sendKeys( "0" );
+        chocolateInput.sendKeys( "0" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
+
+        /* Scenario #2b: Non-integer coffee */
+
+        priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        priceInput.sendKeys( "0" );
+        coffeeInput.sendKeys( "3.14" );
+        milkInput.sendKeys( "0" );
+        sugarInput.sendKeys( "0" );
+        chocolateInput.sendKeys( "0" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
+
+        /* Scenario #3a: Negative milk */
+
+        priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        priceInput.sendKeys( "0" );
+        coffeeInput.sendKeys( "3" );
+        milkInput.sendKeys( "-6" );
+        sugarInput.sendKeys( "0" );
+        chocolateInput.sendKeys( "1" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
+
+        /* Scenario #3b: Non-integer milk */
+
+        priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        priceInput.sendKeys( "2" );
+        coffeeInput.sendKeys( "0" );
+        milkInput.sendKeys( "1.2345" );
+        sugarInput.sendKeys( "0" );
+        chocolateInput.sendKeys( "1" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
+
+        /* Scenario #4a: Negative sugar */
+
+        priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        priceInput.sendKeys( "0" );
+        coffeeInput.sendKeys( "1" );
+        milkInput.sendKeys( "0" );
+        sugarInput.sendKeys( "-1" );
+        chocolateInput.sendKeys( "4" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
+
+        /* Scenario #4b: Non-integer sugar */
+
+        priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        priceInput.sendKeys( "0" );
+        coffeeInput.sendKeys( "1" );
+        milkInput.sendKeys( "0" );
+        sugarInput.sendKeys( "2.5" );
+        chocolateInput.sendKeys( "0" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
+
+        /* Scenario #5a: Negative chocoloate */
+
+        priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        priceInput.sendKeys( "0" );
+        coffeeInput.sendKeys( "1" );
+        milkInput.sendKeys( "0" );
+        sugarInput.sendKeys( "0" );
+        chocolateInput.sendKeys( "-1" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
+
+        /* Scenario #5b: Non-integer chocolate */
+
+        priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        priceInput.sendKeys( "0" );
+        coffeeInput.sendKeys( "0" );
+        milkInput.sendKeys( "0" );
+        sugarInput.sendKeys( "0" );
+        chocolateInput.sendKeys( "1.00001" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
+
+        /* Scenario #6: All fields negative */
+
+        priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        priceInput.sendKeys( "-1" );
+        coffeeInput.sendKeys( "-2" );
+        milkInput.sendKeys( "-3" );
+        sugarInput.sendKeys( "-4" );
+        chocolateInput.sendKeys( "-5" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
+
+        /* Scenario #7: All fields non-integer */
+
+        priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        priceInput.sendKeys( "2.5" );
+        coffeeInput.sendKeys( "3.14" );
+        milkInput.sendKeys( "1.6789" );
+        sugarInput.sendKeys( "4.56" );
+        chocolateInput.sendKeys( "0.000000009" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
+
+        /* BONUS ROUND: mix */
+        priceInput = driver.findElement( By.xpath( "//input[@name='price']" ) );
+        coffeeInput = driver.findElement( By.xpath( "//input[@name='coffee']" ) );
+        milkInput = driver.findElement( By.xpath( "//input[@name='milk']" ) );
+        sugarInput = driver.findElement( By.xpath( "//input[@name='sugar']" ) );
+        chocolateInput = driver.findElement( By.xpath( "//input[@name='chocolate']" ) );
+
+        priceInput.sendKeys( "-2.5" );
+        coffeeInput.sendKeys( "-3" );
+        milkInput.sendKeys( "1.6789" );
+        sugarInput.sendKeys( "4.5" );
+        chocolateInput.sendKeys( "9" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
+        navigateToEdit();
+
+        driver.findElements( By.cssSelector( "input[type=\"radio\"]" ) ).get( 0 ).click();
+
+        assertEquals( "9001", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
+        assertEquals( "1", driver.findElement( By.name( "coffee" ) ).getAttribute( "value" ) );
+        assertEquals( "2", driver.findElement( By.name( "milk" ) ).getAttribute( "value" ) );
+        assertEquals( "3", driver.findElement( By.name( "sugar" ) ).getAttribute( "value" ) );
+        assertEquals( "4", driver.findElement( By.name( "chocolate" ) ).getAttribute( "value" ) );
 
     }
 
