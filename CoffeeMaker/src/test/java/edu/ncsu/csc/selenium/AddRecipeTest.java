@@ -86,6 +86,7 @@ public class AddRecipeTest extends SeleniumTest {
 
         addRecipeHelper();
 
+        waitForAngular();
         assertEquals( "", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
         // Make sure the proper message was displayed.
         assertTextPresent( "Recipe Created", driver );
@@ -106,6 +107,7 @@ public class AddRecipeTest extends SeleniumTest {
         addRecipeHelper();
         addRecipeHelper();
 
+        waitForAngular();
         assertEquals( "50", driver.findElement( By.name( "price" ) ).getAttribute( "value" ) );
         assertTextPresent( "Error while adding recipe", driver );
     }
