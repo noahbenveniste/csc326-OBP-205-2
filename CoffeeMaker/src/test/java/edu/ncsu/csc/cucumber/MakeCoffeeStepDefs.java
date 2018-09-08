@@ -55,6 +55,7 @@ public class MakeCoffeeStepDefs {
         makerData.originalChocolate = originalChocolate;
 
         DomainObject.deleteAll( Inventory.class );
+        this.removeInventoryHelper( 15, 15, 15, 15 );
         final Inventory i = Inventory.getInventory();
         i.addIngredients( originalCoffee, originalMilk, originalSugar, originalChocolate );
         i.save();
@@ -87,6 +88,7 @@ public class MakeCoffeeStepDefs {
         r.setChocolate( removeChocolate );
 
         currentInventory.useIngredients( r );
+        currentInventory.save();
     }
 
     /**
