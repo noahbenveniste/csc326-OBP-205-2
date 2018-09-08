@@ -68,14 +68,8 @@ public class APICoffeeController extends APIController {
         System.out.println( "recipe: " + recipe.getName() + "    amt: " + amtPaid );
         final int change = makeCoffee( recipe, amtPaid );
 
-        // Bug fix: Without this if statement, no free items can be bought
-        if ( recipe.getPrice() == 0 && amtPaid >= 0 ) {
-            System.out.println( "change: " + change );
-            return new ResponseEntity<String>( successResponse( "change: " + amtPaid ), HttpStatus.OK );
-        }
-
-        // Literally who made the decision that this was the best way to do it?
-        if ( change == amtPaid ) {
+        // error handling
+        if ( change < 0 ) {
             if ( amtPaid < recipe.getPrice() ) {
                 return new ResponseEntity( errorResponse( "Not enough money paid" ), HttpStatus.CONFLICT );
             }
@@ -83,6 +77,7 @@ public class APICoffeeController extends APIController {
                 return new ResponseEntity( errorResponse( "Not enough inventory" ), HttpStatus.CONFLICT );
             }
         }
+
         System.out.println( "change: " + change );
         return new ResponseEntity<String>( successResponse( "change: " + change ), HttpStatus.OK );
 
@@ -95,8 +90,11 @@ public class APICoffeeController extends APIController {
      *            recipe that we want to make
      * @param amtPaid
      *            money that the user has given the machine
-     * @return change if there was enough money to make the coffee, throws
-     *         exceptions if not
+     * @return change if there was enough money to make the coffee, -1
+     *         otherwise.
+     *
+     * @throws IllegalArgumentException
+     *             if recipe is not found
      */
     public static int makeCoffee ( final Recipe toPurchase, final int amtPaid ) {
         int change = amtPaid;
@@ -113,10 +111,10 @@ public class APICoffeeController extends APIController {
             }
             else {
                 // not enough inventory
-                return change;
+                return -1;
             }
         }
         // not enough money
-        return change;
+        return -1;
     }
 }
