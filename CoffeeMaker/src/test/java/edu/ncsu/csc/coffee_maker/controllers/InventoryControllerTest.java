@@ -1,6 +1,7 @@
 package edu.ncsu.csc.coffee_maker.controllers;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import edu.ncsu.csc.coffee_maker.models.persistent.Inventory;
 
 /**
  * Tests the InventoryController and that inventory is displayed and added
@@ -44,6 +47,19 @@ public class InventoryControllerTest {
     public void testInventoryGet () throws Exception {
         this.mockMvc.perform( get( "/inventory" ) ).andDo( print() ).andExpect( status().isOk() )
                 .andExpect( content().string( containsString( "View Inventory" ) ) );
+    }
+
+    /**
+     * Tests that the inventory starts off with 15 of each unit on startup.
+     */
+    @Test
+    public void testDefaultInventoryValues () {
+        Inventory.deleteAll( Inventory.class );
+        final Inventory i = Inventory.getInventory();
+        assertEquals( 15, i.getChocolate() );
+        assertEquals( 15, i.getCoffee() );
+        assertEquals( 15, i.getMilk() );
+        assertEquals( 15, i.getSugar() );
     }
 
 }
