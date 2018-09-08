@@ -1,11 +1,13 @@
 package edu.ncsu.csc.selenium;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  * Tests Delete Recipe functionality.
@@ -46,6 +48,18 @@ public class DeleteRecipeTest extends SeleniumTest {
     }
 
     /**
+     * Test to delete all recipes. Expect to get a valid success message stating
+     * the recipe was deleted.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testDeleteRecipe2 () throws Exception {
+        add();
+        deleteAll();
+    }
+
+    /**
      * Tests deleting a recipe.
      *
      * @throws Exception
@@ -59,6 +73,9 @@ public class DeleteRecipeTest extends SeleniumTest {
         driver.findElement( By.cssSelector( "input[type=\"radio\"]" ) ).click();
         driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
         assertTextPresent( "Recipe deleted successfully", driver );
+
+        // assert the submit button is still present
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) );
 
         driver.findElement( By.linkText( "Home" ) ).click();
     }
@@ -90,6 +107,25 @@ public class DeleteRecipeTest extends SeleniumTest {
 
         // Make sure the proper message was displayed.
         assertTextPresent( "Recipe Created", driver );
+    }
+
+    /**
+     * Deletes all recipes.
+     *
+     * Based off of delete()
+     *
+     */
+    public void deleteAll () throws Exception {
+        waitForAngular();
+        driver.get( baseUrl );
+        driver.findElement( By.linkText( "Delete Recipe" ) ).click();
+
+        driver.findElement( By.cssSelector( "input[type=\"checkbox\"]" ) ).click();
+        final List<WebElement> submitButton = driver.findElements( By.cssSelector( "input[type=\"submit\"]" ) );
+        submitButton.get( 0 ).click();
+        assertTextPresent( "Recipe deleted successfully", driver );
+        // assert the submit button is still present
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) );
     }
 
     @Override
