@@ -183,6 +183,8 @@ public class MakeCoffeeTest extends SeleniumTest {
         makeCoffee( "Coffee", 60, 5, 3, 7, 0, 60, "Coffee was made. Your change is 0" );
         makeCoffee( "Coffee", 60, 5, 3, 7, 2, 100, "Coffee was made. Your change is 40" );
         makeCoffee( "Coffee", 60, 5, 3, 7, 2, 61, "Coffee was made. Your change is 1" );
+        makeCoffee( "Coffee", 0, 5, 3, 7, 2, 61, "Coffee was made. Your change is 61" );
+        makeCoffee( "Coffee", 0, 5, 3, 7, 2, 0, "Coffee was made. Your change is 0" );
     }
 
     /**
@@ -195,6 +197,7 @@ public class MakeCoffeeTest extends SeleniumTest {
     public void testInvalidMakeCoffee () throws Exception {
         makeCoffee( "Coffee", 60, 0, 3, 7, 2, 59, "Coffee cannot be made" );
         makeCoffee( "Coffee", 60, 5, 0, 7, 2, -1, "Coffee cannot be made" );
+        makeCoffee( "Coffee", 0, 100000, 3, 7, 2, 61, "Coffee cannot be made" );
     }
 
     @Override
