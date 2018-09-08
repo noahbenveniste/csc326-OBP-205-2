@@ -17,6 +17,7 @@ import edu.ncsu.csc.test_utils.SharedRecipeData;
  *
  * @author Kai Presler-Marshall
  * @author Sarah Elder
+ * @author Daniel Grist
  *
  */
 public class RecipeStepDefs {
@@ -334,6 +335,53 @@ public class RecipeStepDefs {
     @When ( "^I try to add another recipe named (.+)$" )
     public void addAnotherRecipeWithName ( final String name ) {
         invalidRecipe( name, "10", "4", "0", "0", "0" );
+    }
+
+    /**
+     * Unsuccessfully attempt to edit the price to a non integer
+     *
+     * @param cost
+     *            The invalid cost trying to edit them
+     */
+    @When ( "^I attempt to edit the recipe price with (.+)$" )
+    public void invalidPriceEdit ( final String cost ) {
+        recipeData.recipeError = "";
+        final Recipe newR = new Recipe();
+        try {
+            try {
+                newR.setPrice( Integer.parseUnsignedInt( cost ) );
+            }
+            catch ( final NumberFormatException nfe ) {
+                throw new NumberFormatException( "Price must be a positive integer" );
+            }
+        }
+        catch ( final Exception e ) {
+            recipeData.recipeError = e.getMessage();
+        }
+        recipeData.currentRecipe = newR;
+    }
+
+    @When ( "^I attempt to edit that recipe to ingredients: (.+) coffee, (.+) milk, (.+) sugar, (.+) chocolate$" )
+    public void invalidIngredientEdit ( final String coffee, final String milk, final String sugar,
+            final String chocolate ) {
+        recipeData.recipeError = "";
+        final Recipe newR = new Recipe();
+        try {
+            try {
+                newR.setCoffee( Integer.parseInt( coffee ) );
+                newR.setMilk( Integer.parseInt( milk ) );
+                newR.setSugar( Integer.parseInt( sugar ) );
+                newR.setChocolate( Integer.parseInt( chocolate ) );
+            }
+            catch ( final Exception e ) {
+                throw new NumberFormatException( "Units of must be a positive integer" );
+            }
+        }
+        catch ( final Exception e ) {
+            recipeData.recipeError = e.getMessage();
+        }
+        recipeData.currentRecipe = newR;
+
     }
 
     /**
