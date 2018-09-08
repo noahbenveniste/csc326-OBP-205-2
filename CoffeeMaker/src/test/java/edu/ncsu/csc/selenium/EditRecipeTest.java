@@ -35,10 +35,6 @@ public class EditRecipeTest extends SeleniumTest {
         driver.manage().timeouts().implicitlyWait( 10, TimeUnit.SECONDS );
     }
 
-    private static void WaitForAngularToLoad () {
-        new NgWebDriver( (ChromeDriver) driver ).waitForAngularRequestsToFinish();
-    }
-
     /**
      * Deletes all recipes.
      *
