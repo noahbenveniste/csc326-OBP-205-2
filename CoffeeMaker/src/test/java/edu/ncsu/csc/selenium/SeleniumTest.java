@@ -17,7 +17,7 @@ import junit.framework.TestCase;
  * @author Kai Presler-Marshall
  * @author Elizabeth Gilbert
  */
-public abstract class SeleniumTest extends TestCase {
+abstract class SeleniumTest extends TestCase {
 
     final static private String OS = System.getProperty( "os.name" );
 
