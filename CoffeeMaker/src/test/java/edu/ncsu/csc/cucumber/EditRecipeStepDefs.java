@@ -177,6 +177,12 @@ public class EditRecipeStepDefs {
 
         // Submit the recipe.
         driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+        try {
+            Thread.sleep( 5000 );
+        }
+        catch ( final InterruptedException e ) {
+            Assert.fail();
+        }
     }
 
     @When ( "^I edit that recipe to have price: (-?\\d+), coffee: (-?\\d+), milk: (-?\\d+), sugar: (-?\\d+), chocolate: (-?\\d+)$" )
