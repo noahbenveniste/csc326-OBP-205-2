@@ -3,26 +3,111 @@ package edu.ncsu.csc.cucumber;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import com.paulhammant.ngwebdriver.NgWebDriver;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import edu.ncsu.csc.selenium.SeleniumTest;
+import edu.ncsu.csc.selenium.BrowserHandler;
 
-public class EditRecipeStepDefs extends SeleniumTest {
+public class EditRecipeStepDefs {
+
+    final static private String OS = System.getProperty( "os.name" );
+
+    static protected WebDriver  driver;
+
+    protected void setUp () throws Exception {
+        driver = BrowserHandler.getInstance().getDriver();
+    }
+
+    static private boolean Mac () {
+        return OS.contains( "Mac OS X" );
+    }
+
+    static private boolean Linux () {
+        return OS.contains( "Linux" );
+    }
+
+    static private boolean Windows () {
+        return OS.contains( "Windows" );
+    }
+
+    public void close () {
+        driver.close();
+        driver.quit();
+
+        if ( Windows() ) {
+            windowsKill();
+        }
+        else if ( Linux() || Mac() ) {
+            unixKill();
+        }
+
+    }
+
+    static private void windowsKill () {
+        try {
+            Runtime.getRuntime().exec( "taskkill /f /im chrome.exe" );
+            Runtime.getRuntime().exec( "taskkill /f /im chromedriver.exe" );
+        }
+        catch ( final Exception e ) {
+        }
+    }
+
+    static private void unixKill () {
+        try {
+            Runtime.getRuntime().exec( "pkill -f chromium-browser" );
+            Runtime.getRuntime().exec( "pkill -f chrome" );
+            Runtime.getRuntime().exec( "pkill -f chromedriver" );
+        }
+        catch ( final Exception e ) {
+        }
+
+    }
+
+    /**
+     * Asserts that the text is on the page
+     *
+     * @param text
+     *            text to check
+     * @param driver
+     *            web driver
+     */
+    public void assertTextPresent ( final String text, final WebDriver driver ) {
+        final List<WebElement> list = driver.findElements( By.xpath( "//*[contains(text(),'" + text + "')]" ) );
+        Assert.assertTrue( "Text not found!", list.size() > 0 );
+    }
+
+    /**
+     * Asserts that the text is not on the page. Does not pause for text to
+     * appear.
+     *
+     * @param text
+     *            text to check
+     * @param driver
+     *            web driver
+     */
+    public void assertTextNotPresent ( final String text, final WebDriver driver ) {
+        Assert.assertFalse( "Text should not be found!",
+                driver.findElement( By.cssSelector( "BODY" ) ).getText().contains( text ) );
+    }
+
+    /**
+     * wait method that will let angular finish loading before continuing
+     */
+    protected void waitForAngular () {
+        new NgWebDriver( (ChromeDriver) driver ).waitForAngularRequestsToFinish();
+    }
+
     /** The URL for CoffeeMaker - change as needed */
     private String             baseUrl;
     private final StringBuffer verificationErrors = new StringBuffer();
-
-    @Override
-    protected void setUp () throws Exception {
-        super.setUp();
-
-        baseUrl = "http://localhost:8080";
-        driver.manage().timeouts().implicitlyWait( 10, TimeUnit.SECONDS );
-    }
 
     /**
      * Deletes all recipes.
@@ -57,7 +142,7 @@ public class EditRecipeStepDefs extends SeleniumTest {
      * @param chocolate
      *            The amount of chocolate
      */
-    @Given ( "^the CoffeeMaker already has recipe with name: (.+), price: (\\d+) coffee: (\\d+), milk: (\\d+), sugar: (\\d+), chocolate: (\\d+)$" )
+    @Given ( "^the CoffeeMaker already has recipe with name: (.+), price: (-?\\d+) coffee: (-?\\d+), milk: (-?\\d+), sugar: (-?\\d+), chocolate: (-?\\d+)$" )
     public void createRecipe ( final String name, final int price, final int coffee, final int milk, final int sugar,
             final int chocolate ) {
         try {
@@ -65,8 +150,7 @@ public class EditRecipeStepDefs extends SeleniumTest {
         }
         catch ( final Exception e ) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
-            fail();
+            Assert.fail();
         }
 
         baseUrl = "http://localhost:8080";
@@ -95,7 +179,7 @@ public class EditRecipeStepDefs extends SeleniumTest {
         driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
     }
 
-    @When ( "^When I edit that recipe to have price: price: (\\d+) coffee: (\\d+), milk: (\\d+), sugar: (\\d+), chocolate: (\\d+)$" )
+    @When ( "^I edit that recipe to have price: (-?\\d+), coffee: (-?\\d+), milk: (-?\\d+), sugar: (-?\\d+), chocolate: (-?\\d+)$" )
     public void editRecipe ( final int price, final int coffee, final int milk, final int sugar, final int chocolate ) {
         driver.get( baseUrl );
         driver.findElement( By.linkText( "Edit a Recipe" ) ).click();
@@ -105,16 +189,21 @@ public class EditRecipeStepDefs extends SeleniumTest {
 
         final List<WebElement> fields = driver.findElements( By.className( "input-sm" ) );
 
+        fields.get( 0 ).clear();
         fields.get( 0 ).sendKeys( price + "" );
+        fields.get( 1 ).clear();
         fields.get( 1 ).sendKeys( coffee + "" );
+        fields.get( 2 ).clear();
         fields.get( 2 ).sendKeys( milk + "" );
+        fields.get( 3 ).clear();
         fields.get( 3 ).sendKeys( sugar + "" );
+        fields.get( 4 ).clear();
         fields.get( 4 ).sendKeys( chocolate + "" );
 
         driver.findElement( By.className( "btn-primary" ) ).click();
     }
 
-    @Then ( "^the recipe retains its old values of price: (\\d+) coffee: (\\d+), milk: (\\d+), sugar: (\\d+), chocolate: (\\d+)$" )
+    @Then ( "^the recipe retains its old values of price: (-?\\d+), coffee: (-?\\d+), milk: (-?\\d+), sugar: (-?\\d+), chocolate: (-?\\d+)$" )
     public void uneditedRecipe ( final int price, final int coffee, final int milk, final int sugar,
             final int chocolate ) {
         this.assertTextPresent( "Error while updating recipe", driver );
@@ -126,16 +215,16 @@ public class EditRecipeStepDefs extends SeleniumTest {
 
         final List<WebElement> fields = driver.findElements( By.className( "input-sm" ) );
 
-        assertEquals( price + "", fields.get( 0 ).getText() );
-        assertEquals( coffee + "", fields.get( 1 ).getText() );
-        assertEquals( milk + "", fields.get( 2 ).getText() );
-        assertEquals( sugar + "", fields.get( 3 ).getText() );
-        assertEquals( chocolate + "", fields.get( 4 ).getText() );
+        Assert.assertEquals( price + "", fields.get( 0 ).getAttribute( "value" ) );
+        Assert.assertEquals( coffee + "", fields.get( 1 ).getAttribute( "value" ) );
+        Assert.assertEquals( milk + "", fields.get( 2 ).getAttribute( "value" ) );
+        Assert.assertEquals( sugar + "", fields.get( 3 ).getAttribute( "value" ) );
+        Assert.assertEquals( chocolate + "", fields.get( 4 ).getAttribute( "value" ) );
 
-        this.tearDown();
+        // this.tearDown();
     }
 
-    @Then ( "^Then the recipe is edited with  price: (\\d+) coffee: (\\d+), milk: (\\d+), sugar: (\\d+), chocolate: (\\d+)$" )
+    @Then ( "^the recipe is edited with price: (-?\\d+), coffee: (-?\\d+), milk: (-?\\d+), sugar: (-?\\d+), chocolate: (-?\\d+)$" )
     public void editedRecipe ( final int price, final int coffee, final int milk, final int sugar,
             final int chocolate ) {
         this.assertTextNotPresent( "Error while updating recipe", driver );
@@ -147,21 +236,10 @@ public class EditRecipeStepDefs extends SeleniumTest {
 
         final List<WebElement> fields = driver.findElements( By.className( "input-sm" ) );
 
-        assertEquals( price + "", fields.get( 0 ).getText() );
-        assertEquals( coffee + "", fields.get( 1 ).getText() );
-        assertEquals( milk + "", fields.get( 2 ).getText() );
-        assertEquals( sugar + "", fields.get( 3 ).getText() );
-        assertEquals( chocolate + "", fields.get( 4 ).getText() );
-
-        this.tearDown();
-    }
-
-    @Override
-    public void tearDown () {
-        final String verificationErrorString = verificationErrors.toString();
-        if ( !"".equals( verificationErrorString ) ) {
-            fail( verificationErrorString );
-        }
-        super.close();
+        Assert.assertEquals( price + "", fields.get( 0 ).getAttribute( "value" ) );
+        Assert.assertEquals( coffee + "", fields.get( 1 ).getAttribute( "value" ) );
+        Assert.assertEquals( milk + "", fields.get( 2 ).getAttribute( "value" ) );
+        Assert.assertEquals( sugar + "", fields.get( 3 ).getAttribute( "value" ) );
+        Assert.assertEquals( chocolate + "", fields.get( 4 ).getAttribute( "value" ) );
     }
 }

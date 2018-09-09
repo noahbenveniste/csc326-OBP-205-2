@@ -1,6 +1,6 @@
 #Author: Neil Dey
 
-Feature: Edit a recipe (new)
+Feature: Editing a recipe
 	As a user
 	I want to be able to edit recipes 
 	So that I can change my recipe to my liking
@@ -8,7 +8,7 @@ Feature: Edit a recipe (new)
 Scenario Outline: Invalid Edit
 	Given the CoffeeMaker already has recipe with name: <recipeName>, price: <price> coffee: <amtCoffee>, milk: <amtMilk>, sugar: <amtSugar>, chocolate: <amtChocolate>
 	When I edit that recipe to have price: <newPrice>, coffee: <newAmtCoffee>, milk: <newAmtMilk>, sugar: <newAmtSugar>, chocolate: <newAmtChocolate>
-	Then the recipe retains its old values of price: <price> coffee: <amtCoffee>, milk: <amtMilk>, sugar: <amtSugar>, chocolate: <amtChocolate>
+	Then the recipe retains its old values of price: <price>, coffee: <amtCoffee>, milk: <amtMilk>, sugar: <amtSugar>, chocolate: <amtChocolate>
 	
 Examples:
 	| recipeName | price | amtCoffee | amtMilk | amtSugar | amtChocolate | newPrice | newAmtCoffee | newAmtMilk | newAmtSugar | newAmtChocolate |
