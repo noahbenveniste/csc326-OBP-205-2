@@ -32,6 +32,27 @@ public class MakeCoffeeTest extends SeleniumTest {
     }
 
     /**
+     * Deletes all recipes.
+     *
+     * Based off of delete() from DeleteRecipeTest.java
+     *
+     * @author Neil Dey
+     * @throws Exception
+     */
+    public void deleteAll () throws Exception {
+        waitForAngular();
+        driver.get( baseUrl );
+        driver.findElement( By.linkText( "Delete Recipe" ) ).click();
+
+        // Select the recipe to delete and delete it.
+        driver.findElement( By.cssSelector( "input[type=\"checkbox\"]" ) ).click();
+        final List<WebElement> submitButton = driver.findElements( By.cssSelector( "input[type=\"submit\"]" ) );
+        if ( submitButton.size() != 0 ) {
+            submitButton.get( 0 ).click();
+        }
+    }
+
+    /**
      * Helper to create a recipe to make
      *
      * @return the name of the recipe
@@ -40,6 +61,7 @@ public class MakeCoffeeTest extends SeleniumTest {
      */
     private void createRecipe ( final String name, final int price, final int amtCoffee, final int amtMilk,
             final int amtSugar, final int amtChocolate ) throws Exception {
+        deleteAll();
         driver.get( baseUrl + "" );
         driver.findElement( By.linkText( "Add a Recipe" ) ).click();
 
@@ -64,6 +86,21 @@ public class MakeCoffeeTest extends SeleniumTest {
 
         // Make sure the proper message was displayed.
         assertTextPresent( "Recipe Created", driver );
+    }
+
+    private void updateInventory () {
+        driver.get( baseUrl + "" );
+        driver.findElement( By.linkText( "Update Inventory" ) ).click();
+        driver.findElement( By.name( "coffee" ) ).clear();
+        driver.findElement( By.name( "coffee" ) ).sendKeys( "1000" );
+        driver.findElement( By.name( "milk" ) ).clear();
+        driver.findElement( By.name( "milk" ) ).sendKeys( "1000" );
+        driver.findElement( By.name( "sugar" ) ).clear();
+        driver.findElement( By.name( "sugar" ) ).sendKeys( "1000" );
+        driver.findElement( By.name( "chocolate" ) ).clear();
+        driver.findElement( By.name( "chocolate" ) ).sendKeys( "1000" );
+
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
     }
 
     /**
@@ -138,13 +175,16 @@ public class MakeCoffeeTest extends SeleniumTest {
      */
     @Test
     public void testValidMakeCoffee () throws Exception {
-        makeCoffee( "Coffee", 60, 0, 3, 7, 2, 60, "Coffee was made" );
-        makeCoffee( "Coffee", 60, 5, 0, 7, 2, 60, "Coffee was made" );
-        makeCoffee( "Coffee", 60, 5, 3, 0, 2, 60, "Coffee was made" );
-        makeCoffee( "Coffee", 60, 5, 3, 0, 2, 60, "Coffee was made" );
-        makeCoffee( "Coffee", 60, 5, 3, 7, 0, 60, "Coffee was made" );
-        makeCoffee( "Coffee", 60, 5, 3, 7, 2, 100, "Coffee was made" );
-        makeCoffee( "Coffee", 60, 5, 3, 7, 2, 61, "Coffee was made" );
+        updateInventory();
+        makeCoffee( "Coffee", 60, 0, 3, 7, 2, 60, "Coffee was made. Your change is 0." );
+        makeCoffee( "Coffee", 60, 5, 0, 7, 2, 60, "Coffee was made. Your change is 0" );
+        makeCoffee( "Coffee", 60, 5, 3, 0, 2, 60, "Coffee was made. Your change is 0" );
+        makeCoffee( "Coffee", 60, 5, 3, 0, 2, 60, "Coffee was made. Your change is 0" );
+        makeCoffee( "Coffee", 60, 5, 3, 7, 0, 60, "Coffee was made. Your change is 0" );
+        makeCoffee( "Coffee", 60, 5, 3, 7, 2, 100, "Coffee was made. Your change is 40" );
+        makeCoffee( "Coffee", 60, 5, 3, 7, 2, 61, "Coffee was made. Your change is 1" );
+        makeCoffee( "Coffee", 0, 5, 3, 7, 2, 61, "Coffee was made. Your change is 61" );
+        makeCoffee( "Coffee", 0, 5, 3, 7, 2, 0, "Coffee was made. Your change is 0" );
     }
 
     /**
@@ -155,8 +195,9 @@ public class MakeCoffeeTest extends SeleniumTest {
      */
     @Test
     public void testInvalidMakeCoffee () throws Exception {
-        makeCoffee( "Coffee", 60, 0, 3, 7, 2, 59, "Error while making recipe" );
-        makeCoffee( "Coffee", 60, 5, 0, 7, 2, -1, "Error while making recipe" );
+        makeCoffee( "Coffee", 60, 0, 3, 7, 2, 59, "Coffee cannot be made" );
+        makeCoffee( "Coffee", 60, 5, 0, 7, 2, -1, "Coffee cannot be made" );
+        makeCoffee( "Coffee", 0, 100000, 3, 7, 2, 61, "Coffee cannot be made" );
     }
 
     @Override

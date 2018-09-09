@@ -25,15 +25,17 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class Inventory extends DomainObject<Inventory> {
 
-    private Long id;
+    private static final int INIT_AMOUNT = 15;
+
+    private Long             id;
     @Min ( 0 )
-    private int  coffee;
+    private int              coffee;
     @Min ( 0 )
-    private int  milk;
+    private int              milk;
     @Min ( 0 )
-    private int  sugar;
+    private int              sugar;
     @Min ( 0 )
-    private int  chocolate;
+    private int              chocolate;
 
     /**
      * Empty constructor for Hibernate
@@ -371,12 +373,11 @@ public class Inventory extends DomainObject<Inventory> {
             return inventoryList.get( 0 );
         }
         else {
-            // initialize the inventory with 0 of everything
-            final Inventory i = new Inventory( 0, 0, 0, 0 );
+            // initialize the inventory with 15 of everything
+            final Inventory i = new Inventory( INIT_AMOUNT, INIT_AMOUNT, INIT_AMOUNT, INIT_AMOUNT );
             i.save();
             return i;
         }
 
-        
     }
 }

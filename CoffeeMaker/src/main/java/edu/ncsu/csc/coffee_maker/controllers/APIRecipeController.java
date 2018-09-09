@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,7 @@ import edu.ncsu.csc.coffee_maker.models.persistent.Recipe;
  *
  * @author Kai Presler-Marshall
  * @author Michelle Lemons
+ * @author Daniel Grist
  *
  */
 @SuppressWarnings ( { "unchecked", "rawtypes" } )
@@ -30,7 +32,7 @@ public class APIRecipeController extends APIController {
     /**
      * REST API method to provide GET access to all recipes in the system
      *
-     * @return JSON representation of all recipies
+     * @return JSON representation of all recipes
      */
     @GetMapping ( BASE_PATH + "/recipes" )
     public List<Recipe> getRecipes () {
@@ -51,6 +53,29 @@ public class APIRecipeController extends APIController {
         return null == recipe
                 ? new ResponseEntity( errorResponse( "No recipe found with name " + name ), HttpStatus.NOT_FOUND )
                 : new ResponseEntity( successResponse( recipe.getName() + " recieved" ), HttpStatus.OK );
+    }
+
+    /**
+     * REST API endpoint to provide PUT access with the given path variable (the
+     * name of the recipe)
+     *
+     * @param name
+     *            The name of the recipe to update
+     * @param recipe
+     *            The recipe to replace the one selected
+     *
+     * @return ResponseEntity indicating success or failure
+     */
+    @PutMapping ( BASE_PATH + "/recipes/{name}" )
+    public ResponseEntity updateRecipe ( @PathVariable ( "name" ) final String name,
+            @RequestBody final Recipe recipe ) {
+        final Recipe oldRecipe = Recipe.getByName( name );
+        if ( oldRecipe == null ) {
+            return new ResponseEntity( errorResponse( "No recipe found for name " + name ), HttpStatus.NOT_FOUND );
+        }
+        oldRecipe.updateRecipe( recipe );
+        oldRecipe.save();
+        return new ResponseEntity( successResponse( recipe.getName() + " successfully updated" ), HttpStatus.OK );
     }
 
     /**

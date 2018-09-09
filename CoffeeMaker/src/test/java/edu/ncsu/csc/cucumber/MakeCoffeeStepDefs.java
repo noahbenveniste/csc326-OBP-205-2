@@ -55,6 +55,7 @@ public class MakeCoffeeStepDefs {
         makerData.originalChocolate = originalChocolate;
 
         DomainObject.deleteAll( Inventory.class );
+        this.removeInventoryHelper( 15, 15, 15, 15 );
         final Inventory i = Inventory.getInventory();
         i.addIngredients( originalCoffee, originalMilk, originalSugar, originalChocolate );
         i.save();
@@ -87,6 +88,7 @@ public class MakeCoffeeStepDefs {
         r.setChocolate( removeChocolate );
 
         currentInventory.useIngredients( r );
+        currentInventory.save();
     }
 
     /**
@@ -137,7 +139,7 @@ public class MakeCoffeeStepDefs {
     }
 
     /**
-     * Creates a new Recipe for the COffeeMaker using the parameters specified.
+     * Creates a new Recipe for the CoffeeMaker using the parameters specified.
      *
      * @param name
      *            Name of the new Recipe
@@ -190,7 +192,8 @@ public class MakeCoffeeStepDefs {
             try {
                 final int money = Integer.parseInt( sMoney );
                 makerData.moneyGiven = money;
-                makerData.change = APICoffeeController.makeCoffee( makerData.currentRecipe, money );
+                final int makeCoffeeResult = APICoffeeController.makeCoffee( makerData.currentRecipe, money );
+                makerData.change = makeCoffeeResult >= 0 ? makeCoffeeResult : money;
             }
             catch ( final NumberFormatException nfe ) {
                 throw new NumberFormatException( "Money must be a positive integer" );
