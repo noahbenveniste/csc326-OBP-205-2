@@ -17,9 +17,6 @@ import org.openqa.selenium.WebElement;
  */
 
 public class DeleteRecipeTest extends SeleniumTest {
-
-    /** The URL for CoffeeMaker - change as needed */
-    private String             baseUrl;
     private final StringBuffer verificationErrors = new StringBuffer();
 
     private String             recipeName;
@@ -30,7 +27,6 @@ public class DeleteRecipeTest extends SeleniumTest {
         super.setUp();
 
         recipeName = "CoffeeRecipe";
-        baseUrl = "http://localhost:8080";
         driver.manage().timeouts().implicitlyWait( 10, TimeUnit.SECONDS );
 
     }
@@ -115,6 +111,7 @@ public class DeleteRecipeTest extends SeleniumTest {
      * Based off of delete()
      *
      */
+    @Override
     public void deleteAll () throws Exception {
         waitForAngular();
         driver.get( baseUrl );

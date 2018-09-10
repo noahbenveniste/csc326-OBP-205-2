@@ -13,7 +13,13 @@ import com.paulhammant.ngwebdriver.NgWebDriver;
 
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 
-public abstract class CucumberTest {
+/**
+ * Base Cucumber test. Contains helper methods for checking text.
+ *
+ * @author Kai Presler-Marshall
+ * @author Elizabeth Gilbert
+ */
+abstract class CucumberTest {
 
     static {
         ChromeDriverManager.getInstance().setup();

@@ -9,8 +9,7 @@ import cucumber.api.junit.Cucumber;
 
 /**
  * TestRunner class for the Cucumber tests. Adjust the "features" parameter
- * above as necessary to run just a subset of the tests. The body of the class
- * should be blank -- the annotations are all that is required
+ * above as necessary to run just a subset of the tests.
  *
  * @author Kai Presler-Marshall
  * @author Sarah Elder

@@ -1,6 +1,5 @@
 package edu.ncsu.csc.selenium;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
@@ -8,7 +7,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 /**
  * Tests Add Recipe functionality.
@@ -18,38 +16,13 @@ import org.openqa.selenium.WebElement;
 
 public class AddRecipeTest extends SeleniumTest {
 
-    /** The URL for CoffeeMaker - change as needed */
-    private String             baseUrl;
     private final StringBuffer verificationErrors = new StringBuffer();
 
     @Override
     @Before
     protected void setUp () throws Exception {
         super.setUp();
-
-        baseUrl = "http://localhost:8080";
         driver.manage().timeouts().implicitlyWait( 10, TimeUnit.SECONDS );
-
-    }
-
-    /**
-     * Deletes all recipes.
-     *
-     * Based off of delete() from DeleteRecipeTest.java
-     *
-     * @throws Exception
-     */
-    public void deleteAll () throws Exception {
-        waitForAngular();
-        driver.get( baseUrl );
-        driver.findElement( By.linkText( "Delete Recipe" ) ).click();
-
-        // Select the recipe to delete and delete it.
-        driver.findElement( By.cssSelector( "input[type=\"checkbox\"]" ) ).click();
-        final List<WebElement> submitButton = driver.findElements( By.cssSelector( "input[type=\"submit\"]" ) );
-        if ( submitButton.size() != 0 ) {
-            submitButton.get( 0 ).click();
-        }
     }
 
     private void addRecipeHelper () {
