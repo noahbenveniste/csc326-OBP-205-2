@@ -17,9 +17,6 @@ import org.openqa.selenium.WebElement;
  * @author Kai Presler-Marshall (kpresle@ncsu.edu)
  */
 public class MakeCoffeeTest extends SeleniumTest {
-
-    /** The URL for CoffeeMaker - change as needed */
-    private String             baseUrl;
     private final StringBuffer verificationErrors = new StringBuffer();
 
     @Override
@@ -29,27 +26,6 @@ public class MakeCoffeeTest extends SeleniumTest {
         baseUrl = "http://localhost:8080";
         driver.manage().timeouts().implicitlyWait( 20, TimeUnit.SECONDS );
 
-    }
-
-    /**
-     * Deletes all recipes.
-     *
-     * Based off of delete() from DeleteRecipeTest.java
-     *
-     * @author Neil Dey
-     * @throws Exception
-     */
-    public void deleteAll () throws Exception {
-        waitForAngular();
-        driver.get( baseUrl );
-        driver.findElement( By.linkText( "Delete Recipe" ) ).click();
-
-        // Select the recipe to delete and delete it.
-        driver.findElement( By.cssSelector( "input[type=\"checkbox\"]" ) ).click();
-        final List<WebElement> submitButton = driver.findElements( By.cssSelector( "input[type=\"submit\"]" ) );
-        if ( submitButton.size() != 0 ) {
-            submitButton.get( 0 ).click();
-        }
     }
 
     /**
