@@ -21,11 +21,15 @@ abstract class SeleniumTest extends TestCase {
 
     final static private String OS = System.getProperty( "os.name" );
 
+    /** The URL for CoffeeMaker - change as needed */
+    protected String            baseUrl;
+
     static protected WebDriver  driver;
 
     @Override
     protected void setUp () throws Exception {
         driver = BrowserHandler.getInstance().getDriver();
+        baseUrl = "http://localhost:8080";
     }
 
     static private boolean Mac () {
@@ -105,6 +109,23 @@ abstract class SeleniumTest extends TestCase {
      */
     protected void waitForAngular () {
         new NgWebDriver( (ChromeDriver) driver ).waitForAngularRequestsToFinish();
+    }
+
+    /**
+     * Deletes all recipes.
+     *
+     * Based off of delete() from DeleteRecipeTest.java
+     *
+     * @throws Exception
+     */
+    protected void deleteAll () throws Exception {
+        waitForAngular();
+        driver.get( baseUrl );
+        driver.findElement( By.linkText( "Delete Recipe" ) ).click();
+
+        driver.findElement( By.cssSelector( "input[type=\"checkbox\"]" ) ).click();
+        driver.findElement( By.cssSelector( "input[type=\"submit\"]" ) ).click();
+
     }
 
 }

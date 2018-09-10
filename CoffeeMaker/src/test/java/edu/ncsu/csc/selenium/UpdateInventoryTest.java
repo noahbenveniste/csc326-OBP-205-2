@@ -16,19 +16,13 @@ import org.openqa.selenium.By;
  * @author Kai Presler-Marshall (kpresle@ncsu.edu)
  */
 public class UpdateInventoryTest extends SeleniumTest {
-
-    /** The URL for CoffeeMaker - change as needed */
-    private String             baseUrl;
     private final StringBuffer verificationErrors = new StringBuffer();
 
     @Override
     @Before
     protected void setUp () throws Exception {
         super.setUp();
-
-        baseUrl = "http://localhost:8080";
         driver.manage().timeouts().implicitlyWait( 10, TimeUnit.SECONDS );
-
     }
 
     /**
