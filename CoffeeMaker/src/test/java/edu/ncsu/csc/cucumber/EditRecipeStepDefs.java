@@ -1,113 +1,24 @@
 package edu.ncsu.csc.cucumber;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-
-import com.paulhammant.ngwebdriver.NgWebDriver;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import edu.ncsu.csc.selenium.BrowserHandler;
 
-public class EditRecipeStepDefs {
-
-    final static private String OS = System.getProperty( "os.name" );
-
-    static protected WebDriver  driver;
-
-    protected void setUp () throws Exception {
-        driver = BrowserHandler.getInstance().getDriver();
-    }
-
-    static private boolean Mac () {
-        return OS.contains( "Mac OS X" );
-    }
-
-    static private boolean Linux () {
-        return OS.contains( "Linux" );
-    }
-
-    static private boolean Windows () {
-        return OS.contains( "Windows" );
-    }
-
-    public void close () {
-        driver.close();
-        driver.quit();
-
-        if ( Windows() ) {
-            windowsKill();
-        }
-        else if ( Linux() || Mac() ) {
-            unixKill();
-        }
-
-    }
-
-    static private void windowsKill () {
-        try {
-            Runtime.getRuntime().exec( "taskkill /f /im chrome.exe" );
-            Runtime.getRuntime().exec( "taskkill /f /im chromedriver.exe" );
-        }
-        catch ( final Exception e ) {
-        }
-    }
-
-    static private void unixKill () {
-        try {
-            Runtime.getRuntime().exec( "pkill -f chromium-browser" );
-            Runtime.getRuntime().exec( "pkill -f chrome" );
-            Runtime.getRuntime().exec( "pkill -f chromedriver" );
-        }
-        catch ( final Exception e ) {
-        }
-
-    }
-
-    /**
-     * Asserts that the text is on the page
-     *
-     * @param text
-     *            text to check
-     * @param driver
-     *            web driver
-     */
-    public void assertTextPresent ( final String text, final WebDriver driver ) {
-        final List<WebElement> list = driver.findElements( By.xpath( "//*[contains(text(),'" + text + "')]" ) );
-        Assert.assertTrue( "Text not found!", list.size() > 0 );
-    }
-
-    /**
-     * Asserts that the text is not on the page. Does not pause for text to
-     * appear.
-     *
-     * @param text
-     *            text to check
-     * @param driver
-     *            web driver
-     */
-    public void assertTextNotPresent ( final String text, final WebDriver driver ) {
-        Assert.assertFalse( "Text should not be found!",
-                driver.findElement( By.cssSelector( "BODY" ) ).getText().contains( text ) );
-    }
-
-    /**
-     * wait method that will let angular finish loading before continuing
-     */
-    protected void waitForAngular () {
-        new NgWebDriver( (ChromeDriver) driver ).waitForAngularRequestsToFinish();
-    }
-
+/**
+ * Tests the Edit Recipe functionality using cucumber and selenium
+ *
+ * @author Neil Dey
+ *
+ */
+public class EditRecipeStepDefs extends CucumberTest {
     /** The URL for CoffeeMaker - change as needed */
-    private String             baseUrl;
-    private final StringBuffer verificationErrors = new StringBuffer();
+    private final String baseUrl = "http://localhost:8080";
 
     /**
      * Deletes all recipes.
@@ -145,17 +56,6 @@ public class EditRecipeStepDefs {
     @Given ( "^the CoffeeMaker already has recipe with name: (.+), price: (-?\\d+) coffee: (-?\\d+), milk: (-?\\d+), sugar: (-?\\d+), chocolate: (-?\\d+)$" )
     public void createRecipe ( final String name, final int price, final int coffee, final int milk, final int sugar,
             final int chocolate ) {
-        try {
-            this.setUp();
-        }
-        catch ( final Exception e ) {
-            // TODO Auto-generated catch block
-            Assert.fail();
-        }
-
-        baseUrl = "http://localhost:8080";
-        driver.manage().timeouts().implicitlyWait( 10, TimeUnit.SECONDS );
-
         deleteAll();
 
         driver.get( baseUrl );
@@ -185,6 +85,20 @@ public class EditRecipeStepDefs {
         }
     }
 
+    /**
+     * Edits the recipe with the given inputs
+     *
+     * @param price
+     *            The price of the recipe
+     * @param coffee
+     *            The amount of coffee
+     * @param milk
+     *            The amount of milk
+     * @param sugar
+     *            The amount of sugar
+     * @param chocolate
+     *            The amount of chocolate
+     */
     @When ( "^I edit that recipe to have price: (-?\\d+), coffee: (-?\\d+), milk: (-?\\d+), sugar: (-?\\d+), chocolate: (-?\\d+)$" )
     public void editRecipe ( final int price, final int coffee, final int milk, final int sugar, final int chocolate ) {
         driver.get( baseUrl );
@@ -209,6 +123,20 @@ public class EditRecipeStepDefs {
         driver.findElement( By.className( "btn-primary" ) ).click();
     }
 
+    /**
+     * Asserts that the recipe retains the given values
+     *
+     * @param price
+     *            The price of the recipe
+     * @param coffee
+     *            The amount of coffee
+     * @param milk
+     *            The amount of milk
+     * @param sugar
+     *            The amount of sugar
+     * @param chocolate
+     *            The amount of chocolate
+     */
     @Then ( "^the recipe retains its old values of price: (-?\\d+), coffee: (-?\\d+), milk: (-?\\d+), sugar: (-?\\d+), chocolate: (-?\\d+)$" )
     public void uneditedRecipe ( final int price, final int coffee, final int milk, final int sugar,
             final int chocolate ) {
@@ -230,6 +158,20 @@ public class EditRecipeStepDefs {
         // this.tearDown();
     }
 
+    /**
+     * Asserts that the recipe is edited with the given values
+     * 
+     * @param price
+     *            The price of the recipe
+     * @param coffee
+     *            The amount of coffee
+     * @param milk
+     *            The amount of milk
+     * @param sugar
+     *            The amount of sugar
+     * @param chocolate
+     *            The amount of chocolate
+     */
     @Then ( "^the recipe is edited with price: (-?\\d+), coffee: (-?\\d+), milk: (-?\\d+), sugar: (-?\\d+), chocolate: (-?\\d+)$" )
     public void editedRecipe ( final int price, final int coffee, final int milk, final int sugar,
             final int chocolate ) {
